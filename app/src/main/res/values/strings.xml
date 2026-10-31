@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_license">Released under GPL-3.0</string>
+    <string name="about_title">About</string>
+    <string name="about_version" translatable="false">%1$s (%2$d)</string>
+    <string name="app_name" translatable="false">Downgrader</string>
+    <string name="certificate_copied">dota_sig copied</string>
+    <string name="certificate_copy">Copy dota_sig</string>
+    <string name="certificate_save">Save dota_sig</string>
+    <string name="certificate_save_done">dota_sig saved</string>
+    <string name="certificate_save_failed">Could not save dota_sig</string>
+    <string name="certificate_saved">dota_sig saved to %1$s</string>
+    <string name="certificate_section_title" translatable="false">dota_sig</string>
+    <string name="clipboard_unavailable">Clipboard is unavailable</string>
+    <string name="close">Close</string>
+    <string name="collapse_download_instructions">Collapse guide</string>
+    <string name="credential_missing">Downgrade credential not detected</string>
+    <string name="credential_missing_note">This device does not expose the downgrade credential, so the service cannot be queried</string>
+    <string name="credential_ready">Credential detected</string>
+    <string name="device_android_version">Android version</string>
+    <string name="device_error_exit">getprop exited with code %1$d</string>
+    <string name="device_error_interrupted">Reading device properties was interrupted</string>
+    <string name="device_error_unavailable">Device properties could not be read. Confirm that getprop is available on this device.</string>
+    <string name="device_model">Model</string>
+    <string name="device_name">Device name</string>
+    <string name="device_product_version">Current system</string>
+    <string name="device_reading">Reading device properties…</string>
+    <string name="device_section_title">Device</string>
+    <string name="device_serial">Serial number</string>
+    <string name="download_cancel">Cancel download</string>
+    <string name="download_firmware">Download firmware</string>
+    <string name="download_instructions">1. Download the downgrade package and dota_sig.txt, granting storage access when prompted\n\n2. Both files are saved directly to the internal storage root; no extraction is needed\n\n3. System update → Menu → Upgrade settings → Local upgrade, then select the package to downgrade</string>
+    <string name="download_instructions_title">Downgrade package guide</string>
+    <string name="download_retry">Retry</string>
+    <string name="download_storage_permission_denied">Grant storage access to save files to the internal storage root</string>
+    <string name="expand_download_instructions">Expand guide</string>
+    <string name="firmware_android_version">Android version</string>
+    <string name="firmware_download_cancelled">Download cancelled</string>
+    <string name="firmware_download_completed">Firmware package saved to the internal storage root</string>
+    <string name="firmware_download_done">Done</string>
+    <string name="firmware_download_failed">Firmware download failed</string>
+    <string name="firmware_download_integrity_required">A valid file size and package SHA-256 are required to verify this download</string>
+    <string name="firmware_download_notification_channel">Firmware downloads</string>
+    <string name="firmware_download_notification_progress">%1$d%% downloaded</string>
+    <string name="firmware_download_percentage" translatable="false">%1$d%%</string>
+    <string name="firmware_download_preparing">Preparing</string>
+    <string name="firmware_download_running">Downloading</string>
+    <string name="firmware_download_size" translatable="false">%1$s / %2$s</string>
+    <string name="firmware_download_url">Download URL</string>
+    <string name="firmware_download_verifying">Verifying</string>
+    <string name="firmware_downloading">Downloading firmware</string>
+    <string name="firmware_file_name">Download file name</string>
+    <string name="firmware_file_size">File size</string>
+    <string name="firmware_release_time">Release time</string>
+    <string name="firmware_rom_version">ROM version</string>
+    <string name="firmware_section_title">Available downgrade package</string>
+    <string name="firmware_sha256" translatable="false">SHA-256</string>
+    <string name="firmware_system_version">Target system version</string>
+    <string name="firmware_url_copied">Download URL copied</string>
+    <string name="firmware_url_copy">Copy URL</string>
+    <string name="open_system_updater">Open system update</string>
+    <string name="query_action">Query</string>
+    <string name="query_error_http">The Vivo service returned HTTP %1$d</string>
+    <string name="query_error_invalid_response">The Vivo service returned a response this app could not read</string>
+    <string name="query_error_network">The request could not reach the Vivo service. Check the network and try again.</string>
+    <string name="query_error_rejected">The Vivo service rejected the request (code %1$d)</string>
+    <string name="query_error_rejected_detail">The Vivo service rejected the request (code %1$d): %2$s</string>
+    <string name="query_error_title">Could not retrieve downgrade package information</string>
+    <string name="query_error_unexpected">The request could not be completed due to an unexpected error</string>
+    <string name="query_in_progress">Querying…</string>
+    <string name="value_unknown">Not available</string>
+    <string name="view_source">View source code</string>
+</resources>
