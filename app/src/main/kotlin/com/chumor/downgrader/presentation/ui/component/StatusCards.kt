@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,6 +14,7 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.chumor.downgrader.R
 import com.chumor.downgrader.domain.model.DeviceReadError
@@ -153,7 +155,12 @@ internal fun CredentialStatusCard(
 }
 
 @Composable
-internal fun ErrorCard(title: String, message: String, modifier: Modifier = Modifier) {
+internal fun ErrorCard(
+    title: String,
+    message: String,
+    modifier: Modifier = Modifier,
+    details: String? = null,
+) {
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -161,12 +168,33 @@ internal fun ErrorCard(title: String, message: String, modifier: Modifier = Modi
             .padding(bottom = 12.dp)
             .semantics { liveRegion = LiveRegionMode.Polite },
     ) {
-        BasicComponent(
-            title = title,
-            titleColor = BasicComponentDefaults.titleColor(color = MiuixTheme.colorScheme.error),
-            summary = message,
-            summaryColor = BasicComponentDefaults.summaryColor(color = MiuixTheme.colorScheme.error),
-        )
+        SelectionContainer {
+            BasicComponent(
+                title = title,
+                titleColor = BasicComponentDefaults.titleColor(color = MiuixTheme.colorScheme.error),
+                summary = message,
+                bottomAction = if (details != null) {
+                    {
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Text(
+                                text = androidx.compose.ui.res.stringResource(R.string.error_details),
+                                style = MiuixTheme.textStyles.footnote1,
+                                color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                            )
+                            Text(
+                                text = details,
+                                modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+                                style = MiuixTheme.textStyles.body2,
+                                fontFamily = FontFamily.Monospace,
+                                color = MiuixTheme.colorScheme.onSurface,
+                            )
+                        }
+                    }
+                } else {
+                    null
+                },
+            )
+        }
     }
 }
 
@@ -203,6 +231,9 @@ internal fun queryErrorMessage(error: QueryError): String = when (error) {
 
     QueryError.InvalidResponse ->
         androidx.compose.ui.res.stringResource(R.string.query_error_invalid_response)
+
+    QueryError.PackageUnavailable ->
+        androidx.compose.ui.res.stringResource(R.string.query_error_package_unavailable)
 
     QueryError.Unexpected ->
         androidx.compose.ui.res.stringResource(R.string.query_error_unexpected)

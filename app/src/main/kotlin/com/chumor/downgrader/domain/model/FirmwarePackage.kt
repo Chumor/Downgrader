@@ -26,6 +26,7 @@ sealed interface QueryError {
     data object Network : QueryError
     data class HttpStatus(val code: Int) : QueryError
     data class ServerRejected(val code: Int, val serverMessage: String) : QueryError
+    data object PackageUnavailable : QueryError
     data object InvalidResponse : QueryError
     data object Unexpected : QueryError
 }
@@ -33,4 +34,5 @@ sealed interface QueryError {
 class QueryException(
     val error: QueryError,
     cause: Throwable? = null,
-) : IOException(cause)
+    message: String? = null,
+) : IOException(message, cause)

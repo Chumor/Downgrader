@@ -94,6 +94,7 @@ class DowngraderViewModel(
                 isQuerying = true,
                 firmware = null,
                 queryError = null,
+                queryErrorDetails = "",
             )
         }
         viewModelScope.launch {
@@ -112,6 +113,7 @@ class DowngraderViewModel(
                     it.copy(
                         isQuerying = false,
                         queryError = exception.error,
+                        queryErrorDetails = exception.queryErrorDetails(),
                     )
                 }
             } catch (exception: Exception) {
@@ -119,6 +121,7 @@ class DowngraderViewModel(
                     it.copy(
                         isQuerying = false,
                         queryError = QueryError.Unexpected,
+                        queryErrorDetails = exception.queryErrorDetails(),
                     )
                 }
             }
@@ -170,3 +173,8 @@ class DowngraderViewModel(
         repository.cancelFirmwareDownload()
     }
 }
+
+private fun Throwable.queryErrorDetails(): String =
+    generateSequence(this) { it.cause }
+        .mapNotNull { if (it is QueryException) it.message else it.toString() }
+        .joinToString("\n")

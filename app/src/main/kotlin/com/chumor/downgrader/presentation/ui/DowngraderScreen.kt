@@ -218,6 +218,7 @@ fun DowngraderScreen(
                         ErrorCard(
                             title = androidx.compose.ui.res.stringResource(R.string.query_error_title),
                             message = queryErrorMessage(error),
+                            details = state.queryErrorDetails,
                         )
                     }
                 }

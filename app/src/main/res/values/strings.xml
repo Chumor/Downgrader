@@ -33,6 +33,7 @@
     <string name="download_instructions_title">Downgrade package guide</string>
     <string name="download_retry">Retry</string>
     <string name="download_storage_permission_denied">Grant storage access to save files to the internal storage root</string>
+    <string name="error_details">Error details</string>
     <string name="expand_download_instructions">Expand guide</string>
     <string name="firmware_android_version">Android version</string>
     <string name="firmware_download_cancelled">Download cancelled</string>
@@ -63,6 +64,7 @@
     <string name="query_error_http">The Vivo service returned HTTP %1$d</string>
     <string name="query_error_invalid_response">The Vivo service returned a response this app could not read</string>
     <string name="query_error_network">The request could not reach the Vivo service. Check the network and try again.</string>
+    <string name="query_error_package_unavailable">The Vivo service returned success but did not provide downgrade package data for this device</string>
     <string name="query_error_rejected">The Vivo service rejected the request (code %1$d)</string>
     <string name="query_error_rejected_detail">The Vivo service rejected the request (code %1$d): %2$s</string>
     <string name="query_error_title">Could not retrieve downgrade package information</string>

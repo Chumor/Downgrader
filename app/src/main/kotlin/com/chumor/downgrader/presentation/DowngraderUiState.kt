@@ -20,6 +20,7 @@ data class DowngraderUiState(
     val firmwareDownload: FirmwareDownloadState = FirmwareDownloadState(),
     val firmware: FirmwarePackage? = null,
     val queryError: QueryError? = null,
+    val queryErrorDetails: String = "",
 ) {
     val isDownloadingFirmware: Boolean
         get() = firmwareDownload.status.isActive

@@ -22,14 +22,14 @@ import org.json.JSONObject
 
 class VivoUpgradeApi {
     fun query(credential: String): FirmwarePackage {
-        val switchResponse = request(AUTO_DETECT_ENDPOINT, credential)
-        requireSuccess(switchResponse)
-
+        request(AUTO_DETECT_ENDPOINT, credential)
         val packageResponse = request(DEGRADE_PACKAGE_ENDPOINT, credential)
-        requireSuccess(packageResponse)
 
         val data = packageResponse.optJSONObject("data")
-            ?: throw QueryException(QueryError.InvalidResponse)
+            ?: throw QueryException(
+                QueryError.PackageUnavailable,
+                message = "POST $DEGRADE_PACKAGE_ENDPOINT\n$packageResponse",
+            )
 
         return FirmwarePackage(
             systemVersion = data.optString("sysVer", ""),
@@ -53,13 +53,19 @@ class VivoUpgradeApi {
             throw QueryException(
                 QueryError.ServerRejected(
                     code = returnCode,
-                    serverMessage = response.optString("message", "").take(MAX_SERVER_MESSAGE_LENGTH),
+                    serverMessage = response.optString("message", ""),
                 ),
             )
         }
     }
 
-    private fun request(endpoint: String, credential: String): JSONObject {
+    private fun request(endpoint: String, credential: String): JSONObject = try {
+        executeRequest(endpoint, credential).also(::requireSuccess)
+    } catch (exception: QueryException) {
+        throw QueryException(exception.error, exception, "POST $endpoint")
+    }
+
+    private fun executeRequest(endpoint: String, credential: String): JSONObject {
         val sessionBytes = ByteArray(SESSION_RANDOM_BYTES).also(secureRandom::nextBytes)
         val session = sessionBytes.toHexString()
         val encryptedVsd = try {
@@ -103,33 +109,46 @@ class VivoUpgradeApi {
 
             val httpStatus = connection.responseCode
             if (httpStatus in 300..399) {
-                throw QueryException(QueryError.HttpStatus(httpStatus))
+                throw QueryException(QueryError.HttpStatus(httpStatus), message = connection.responseMessage)
             }
 
             val responseStream = if (httpStatus >= 400) connection.errorStream else connection.inputStream
             if (responseStream == null) {
                 if (httpStatus !in 200..299) {
-                    throw QueryException(QueryError.HttpStatus(httpStatus))
+                    throw QueryException(
+                        QueryError.HttpStatus(httpStatus),
+                        message = "HTTP $httpStatus: empty response body",
+                    )
                 }
-                throw QueryException(QueryError.InvalidResponse)
+                throw QueryException(
+                    QueryError.InvalidResponse,
+                    message = "HTTP $httpStatus: empty response body",
+                )
             }
             val responseBody = responseStream.use { input ->
                 BufferedReader(InputStreamReader(input, StandardCharsets.UTF_8)).use { it.readText() }
             }.trim()
             if (responseBody.isEmpty()) {
                 if (httpStatus !in 200..299) {
-                    throw QueryException(QueryError.HttpStatus(httpStatus))
+                    throw QueryException(
+                        QueryError.HttpStatus(httpStatus),
+                        message = "HTTP $httpStatus: empty response body",
+                    )
                 }
-                throw QueryException(QueryError.InvalidResponse)
+                throw QueryException(
+                    QueryError.InvalidResponse,
+                    message = "HTTP $httpStatus: empty response body",
+                )
             }
 
             try {
                 return decryptResponse(responseBody, session)
             } catch (exception: QueryException) {
-                if (httpStatus !in 200..299) {
-                    throw QueryException(QueryError.HttpStatus(httpStatus), exception)
-                }
-                throw exception
+                throw QueryException(
+                    error = if (httpStatus !in 200..299) QueryError.HttpStatus(httpStatus) else exception.error,
+                    cause = exception,
+                    message = "HTTP $httpStatus\n$responseBody",
+                )
             }
         } catch (exception: QueryException) {
             throw exception
@@ -153,7 +172,10 @@ class VivoUpgradeApi {
             val jsonStart = plaintext.indexOf('{')
             val jsonEnd = plaintext.lastIndexOf('}')
             if (jsonStart < 0 || jsonEnd <= jsonStart) {
-                throw QueryException(QueryError.InvalidResponse)
+                throw QueryException(
+                    QueryError.InvalidResponse,
+                    message = "Decrypted response does not contain a JSON object",
+                )
             }
             return JSONObject(plaintext.substring(jsonStart, jsonEnd + 1))
         } catch (exception: IllegalArgumentException) {
@@ -185,7 +207,6 @@ class VivoUpgradeApi {
         const val SESSION_RANDOM_BYTES = 8
         const val CONNECTION_TIMEOUT_MILLIS = 30_000
         const val READ_TIMEOUT_MILLIS = 30_000
-        const val MAX_SERVER_MESSAGE_LENGTH = 240
         const val USER_AGENT = "vivoAssist"
         val secureRandom = SecureRandom()
         val RESPONSE_KEY = "181120800577d693a5746b4cf212c068".toByteArray(StandardCharsets.US_ASCII)
