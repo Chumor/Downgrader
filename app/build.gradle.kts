@@ -7,10 +7,14 @@ val gitCommitCount = providers.exec {
     workingDir(rootProject.projectDir)
     commandLine("git", "rev-list", "--count", "HEAD")
 }.standardOutput.asText.map { it.trim().toInt() }
-val gitCommitHash = providers.exec {
+val officialRelease = providers.gradleProperty("officialRelease").orNull == "true"
+val gitVersionName = providers.exec {
     workingDir(rootProject.projectDir)
-    commandLine("git", "rev-parse", "--short=7", "HEAD")
-}.standardOutput.asText.map { it.trim() }
+    commandLine(
+        "git", "describe", "--tags", "--match", "v[0-9]*",
+        if (officialRelease) "--exact-match" else "--long",
+    )
+}.standardOutput.asText.map { it.trim().removePrefix("v") }
 
 val releaseStoreFilePath = System.getenv("KEYSTORE_PATH")
 val releaseStorePassword = System.getenv("KEYSTORE_PASSWORD")
@@ -37,7 +41,7 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = gitCommitCount.get()
-        versionName = "1.0.0"
+        versionName = gitVersionName.get()
 
         ndk {
             abiFilters += "arm64-v8a"
@@ -78,7 +82,7 @@ androidComponents {
     onVariants { variant ->
         variant.outputs.forEach { output ->
             output.outputFileName.set(
-                "Downgrader_${output.versionName.get()}_${output.versionCode.get()}_${gitCommitHash.get()}_${variant.buildType}.apk",
+                "Downgrader_v${output.versionName.get()}_${output.versionCode.get()}-${variant.buildType}.apk",
             )
         }
     }

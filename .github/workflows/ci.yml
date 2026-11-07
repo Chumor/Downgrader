@@ -1,6 +1,13 @@
-name: Build
+name: CI
 
 on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      release:
+        description: Build an exact version tag as an official release
+        type: boolean
+        default: false
   push:
     branches:
       - main
@@ -46,7 +53,7 @@ jobs:
         run: echo "$KEYSTORE_BASE64" | base64 -d > keystore.jks
 
       - name: Build Release APK
-        run: ./gradlew --no-daemon :app:assembleRelease
+        run: ./gradlew --no-daemon :app:assembleRelease -PofficialRelease=${{ inputs.release == true }}
         env:
           KEYSTORE_PATH: ${{ github.workspace }}/keystore.jks
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
